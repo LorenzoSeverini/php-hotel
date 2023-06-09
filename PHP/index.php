@@ -1,3 +1,114 @@
+<?php
+
+// hotels array
+$hotels = [
+
+    [
+        'name' => 'Hotel Belvedere',
+        'description' => 'Hotel Belvedere Descrizione',
+        'parking' => true,
+        'vote' => 4,
+        'distance to center' => 10.4
+    ],
+    [
+        'name' => 'Hotel Futuro',
+        'description' => 'Hotel Futuro Descrizione',
+        'parking' => true,
+        'vote' => 2,
+        'distance to center' => 2
+    ],
+    [
+        'name' => 'Hotel Rivamare',
+        'description' => 'Hotel Rivamare Descrizione',
+        'parking' => false,
+        'vote' => 1,
+        'distance to center' => 1
+    ],
+    [
+        'name' => 'Hotel Bellavista',
+        'description' => 'Hotel Bellavista Descrizione',
+        'parking' => false,
+        'vote' => 5,
+        'distance to center' => 5.5
+    ],
+    [
+        'name' => 'Hotel Milano',
+        'description' => 'Hotel Milano Descrizione',
+        'parking' => true,
+        'vote' => 2,
+        'distance to center' => 50
+    ],
+
+];
+
+// filter the hotels
+$filteredHotels = [];
+
+// determinate parking icon and vote stars 
+foreach ($hotels as $key => $hotel) {
+
+    // determinate parking icon
+    if ($hotel['parking'] == true) {
+        $hotels[$key]['parking'] = '<i class="fas fa-parking"></i>';
+    } else {
+        $hotels[$key]['parking'] = '<i class="fas fa-times"></i>';
+    }
+
+    // determinate vote stars
+    $vote = $hotel['vote'];
+    $stars = '';
+    for ($i = 0; $i < 5; $i++) {
+        if ($i < $vote) {
+            $stars .= '<i class="fas fa-star"></i>';
+        } else {
+            $stars .= '<i class="far fa-star"></i>';
+        }
+    }
+    $hotels[$key]['vote'] = $stars;
+
+    // determinate distance to center
+    $distance = $hotel['distance to center'];
+    if ($distance < 5) {
+        $hotels[$key]['distance to center'] = '<i class="fas fa-walking"></i> <div class="d-inline-block">' . $distance . ' km</div>';
+    } elseif ($distance < 20) {
+        $hotels[$key]['distance to center'] = '<i class="fas fa-bicycle"></i> <div class="d-inline-block">' . $distance . ' km</div>';
+    } else {
+        $hotels[$key]['distance to center'] = '<i class="fas fa-car"></i> <div class="d-inline-block">' . $distance . ' km</div>';
+    }
+}
+
+
+// filter by parking
+if (!empty($_GET['parking'])) {
+    $parking = $_GET['parking'];
+    if ($parking == 'true') {
+        foreach ($hotels as $hotel) {
+            if ($hotel['parking'] == '<i class="fas fa-parking"></i>') {
+                $filteredHotels[] = $hotel;
+            }
+        }
+    } else {
+        $filteredHotels = $hotels;
+    }
+} else {
+    $filteredHotels = $hotels;
+}
+
+// filter by vote show all or only the selected vote 
+if (!empty($_GET['vote'])) {
+    $vote = $_GET['vote'];
+    if ($vote == 'all') {
+        $filteredHotels = $filteredHotels;
+    } else {
+        foreach ($filteredHotels as $hotel) {
+            if ($hotel['vote'] == $vote) {
+                $filteredHotels = [$hotel];
+            }
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -20,118 +131,6 @@
 </head>
 
 <body>
-
-    <?php
-
-    // hotels array
-    $hotels = [
-
-        [
-            'name' => 'Hotel Belvedere',
-            'description' => 'Hotel Belvedere Descrizione',
-            'parking' => true,
-            'vote' => 4,
-            'distance to center' => 10.4
-        ],
-        [
-            'name' => 'Hotel Futuro',
-            'description' => 'Hotel Futuro Descrizione',
-            'parking' => true,
-            'vote' => 2,
-            'distance to center' => 2
-        ],
-        [
-            'name' => 'Hotel Rivamare',
-            'description' => 'Hotel Rivamare Descrizione',
-            'parking' => false,
-            'vote' => 1,
-            'distance to center' => 1
-        ],
-        [
-            'name' => 'Hotel Bellavista',
-            'description' => 'Hotel Bellavista Descrizione',
-            'parking' => false,
-            'vote' => 5,
-            'distance to center' => 5.5
-        ],
-        [
-            'name' => 'Hotel Milano',
-            'description' => 'Hotel Milano Descrizione',
-            'parking' => true,
-            'vote' => 2,
-            'distance to center' => 50
-        ],
-
-    ];
-
-    // filter the hotels
-    $filteredHotels = [];
-
-    // determinate parking icon and vote stars 
-    foreach ($hotels as $key => $hotel) {
-
-        // determinate parking icon
-        if ($hotel['parking'] == true) {
-            $hotels[$key]['parking'] = '<i class="fas fa-parking"></i>';
-        } else {
-            $hotels[$key]['parking'] = '<i class="fas fa-times"></i>';
-        }
-
-        // determinate vote stars
-        $vote = $hotel['vote'];
-        $stars = '';
-        for ($i = 0; $i < 5; $i++) {
-            if ($i < $vote) {
-                $stars .= '<i class="fas fa-star"></i>';
-            } else {
-                $stars .= '<i class="far fa-star"></i>';
-            }
-        }
-        $hotels[$key]['vote'] = $stars;
-
-        // determinate distance to center
-        $distance = $hotel['distance to center'];
-        if ($distance < 5) {
-            $hotels[$key]['distance to center'] = '<i class="fas fa-walking"></i> <div class="d-inline-block">' . $distance . ' km</div>';
-        } elseif ($distance < 20) {
-            $hotels[$key]['distance to center'] = '<i class="fas fa-bicycle"></i> <div class="d-inline-block">' . $distance . ' km</div>';
-        } else {
-            $hotels[$key]['distance to center'] = '<i class="fas fa-car"></i> <div class="d-inline-block">' . $distance . ' km</div>';
-        }
-    }
-
-
-    // filter by parking
-    if (!empty($_GET['parking'])) {
-        $parking = $_GET['parking'];
-        if ($parking == 'true') {
-            foreach ($hotels as $hotel) {
-                if ($hotel['parking'] == '<i class="fas fa-parking"></i>') {
-                    $filteredHotels[] = $hotel;
-                }
-            }
-        } else {
-            $filteredHotels = $hotels;
-        }
-    } else {
-        $filteredHotels = $hotels;
-    }
-
-    // filter by vote show all or only the selected vote 
-    if (!empty($_GET['vote'])) {
-        $vote = $_GET['vote'];
-        if ($vote == 'all') {
-            $filteredHotels = $filteredHotels;
-        } else {
-            foreach ($filteredHotels as $hotel) {
-                if ($hotel['vote'] == $vote) {
-                    $filteredHotels = [$hotel];
-                }
-            }
-        }
-    }
-    ?>
-
 
     <!-- header -->
     <header class="bg-dark">
